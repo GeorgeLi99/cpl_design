@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+这是一个C语言的项目，我要用stb_image库读写PNG/JPG，实现灰度化、反色、模糊滤镜等功能，并且生成ASCLL字符画，并加入一些扩展功能，如边缘检测（Sobel算子）、图像旋转（矩阵变换）、批量处理功能等。
