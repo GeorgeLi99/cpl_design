@@ -22,7 +22,7 @@ ImageProcessor 是一个基于 C 语言的图像处理工具，使用 stb_image 
 
 ## 构建
 1. 安装依赖。
-2. 在项目根目录下(./cpl_design)运行：
+2. 在项目根目录下(./cpl_design)运行以下powershell命令：
 - 如果你使用MinGW:
 ```powershell
 mingw32-make
