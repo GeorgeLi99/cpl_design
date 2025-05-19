@@ -22,47 +22,58 @@ ImageProcessor 是一个基于 C 语言的图像处理工具，使用 stb_image 
 
 ## 构建
 1. 安装依赖。
-2. 在项目根目录下运行：
-```sh
+2. 在项目根目录下(./cpl_design)运行：
+- 如果你使用MinGW:
+```powershell
+mingw32-make
+```
+
+- 如果你使用 MSYS2、Git Bash 或安装了 make：
+```
 make
 ```
-3. 可执行文件将在 `bin/` 目录下生成。
+
+1. 可执行文件将在 `bin/` 目录下生成。
 
 ## 项目结构
 ```
 .
-├── src                    // 源代码目录
-│   ├── main.c
-│   ├── image.c
-│   ├── filters.c
-│   ├── ascii_art.c
-│   ├── edge.c
-│   ├── rotate.c
-│   └── batch.c
-├── include                // 头文件目录
-│   ├── image.h
-│   ├── filters.h
-│   ├── ascii_art.h
-│   ├── edge.h
-│   ├── rotate.h
-│   └── batch.h
-├── third_party
-│   └── stb
-│       ├── stb_image.h         // 第三方库
-│       └── stb_image_write.h
-├── lib                    // 编译后库文件
-├── bin                    // 可执行文件输出
+├── src                     // 源代码目录
+│   ├── main.c              // 主程序入口
+│   ├── image.c             // 图像加载和保存
+│   ├── filters.c           // 滤镜效果实现
+│   ├── ascii_art.c         // ASCII 字符画生成
+│   ├── edge.c              // 边缘检测实现
+│   ├── rotate.c            // 图像旋转功能
+│   └── batch.c             // 批量处理功能
+├── include                 // 头文件目录
+│   ├── image.h             // 图像处理相关声明
+│   ├── filters.h           // 滤镜函数声明
+│   ├── ascii_art.h         // ASCII 艺术相关声明
+│   ├── edge.h              // 边缘检测相关声明
+│   ├── rotate.h            // 旋转功能相关声明
+│   └── batch.h             // 批处理相关声明
+├── third_party             // 第三方库
+│   └── stb                 // stb 单头文件库
+│       ├── stb_image.h     // 图像加载库
+│       └── stb_image_write.h // 图像保存库
+├── obj                     // 编译生成的对象文件
+│   ├── main.o
+│   ├── image.o
+│   ├── filters.o
+│   ├── ascii_art.o
+│   ├── edge.o
+│   ├── rotate.o
+│   └── batch.o
+├── bin                     // 可执行文件输出
+│   └── ImageProcessor.exe  // 程序可执行文件
 ├── image.jpg               // 测试图像
 ├── .clang-format           // 格式化工具配置文件
-├── Makefile               // 构建脚本
-└── README.md              // 项目说明
+├── Makefile                // 项目构建配置
+└── README.md               // 项目说明
 ```
 
 ## 使用示例
 ```sh
 bin/ImageProcessor input.jpg output.jpg
 ```
-其中 `input.jpg` 是输入图像文件，`output.jpg` 是生成的灰度图像文件。
-
-## 许可证
-MIT License

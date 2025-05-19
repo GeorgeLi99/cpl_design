@@ -1,4 +1,4 @@
-#include "../include/rotate.h"
+#include "rotate.h"
 
 /**
  * @brief 旋转图像。

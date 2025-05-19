@@ -1,4 +1,4 @@
-#include "../include/edge.h"
+#include "edge.h"
 
 /**
  * @brief 使用 Sobel 算子进行边缘检测。

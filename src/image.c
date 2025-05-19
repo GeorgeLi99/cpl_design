@@ -1,4 +1,4 @@
-#include "../include/image.h"
+#include "image.h"
 
 /**
  * @brief 从指定路径加载图像。
