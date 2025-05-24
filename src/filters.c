@@ -2,6 +2,7 @@
 #include <stddef.h> // For size_t
 #include <stdlib.h> // For malloc and free
 #include <string.h> // For memcpy
+#include <math.h>   // For exp() 和 M_PI
 
 /**
  * @brief 将图像数据转换为灰度图。
@@ -83,21 +84,47 @@ void blur(unsigned char *data, int width, int height, int channels, int radius)
     // 复制原始数据到临时缓冲区
     memcpy(temp, data, width * height * channels);
 
-    // 注释掉未使用的变量
-    // int kernel_size = 2 * radius + 1;
+    // 高斯模糊的核心大小 = 2 * radius + 1
+    int kernel_size = 2 * radius + 1;
 
-    // 为了简化，使用均值模糊而不是真正的高斯模糊
-    // 每个像素取周围区域的平均值
+    // 计算高斯权重
+    // 分配权重数组
+    float *kernel = (float *)malloc(kernel_size * kernel_size * sizeof(float));
+    if (kernel == NULL) {
+        free(temp);
+        return;
+    }
+
+    // 设置标准差 sigma
+    float sigma = radius / 2.0f;
+    float sigma2 = 2.0f * sigma * sigma;
+    float sigma2_pi = sigma2 * M_PI;
+    float sum = 0.0f; // 用于归一化
+
+    // 计算高斯核权重
+    for (int y = -radius; y <= radius; y++) {
+        for (int x = -radius; x <= radius; x++) {
+            // 高斯函数: G(x,y) = (1/(2*π*σ^2)) * e^(-(x^2+y^2)/(2*σ^2))
+            float weight = exp(-(x * x + y * y) / sigma2) / sigma2_pi;
+            int idx = (y + radius) * kernel_size + (x + radius);
+            kernel[idx] = weight;
+            sum += weight;
+        }
+    }
+
+    // 归一化核，使权重和为1
+    for (int i = 0; i < kernel_size * kernel_size; i++) {
+        kernel[i] /= sum;
+    }
 
     // 遍历所有像素
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            // 对每个通道分别计算模糊值
+            // 对每个通道分别计算高斯模糊值
             for (int c = 0; c < channels; c++) {
-                int sum = 0;
-                int count = 0;
+                float sum = 0.0f;
 
-                // 遍历核心区域
+                // 应用高斯核
                 for (int ky = -radius; ky <= radius; ky++) {
                     for (int kx = -radius; kx <= radius; kx++) {
                         // 计算相邻像素坐标
@@ -114,18 +141,19 @@ void blur(unsigned char *data, int width, int height, int channels, int radius)
                         if (ny >= height)
                             ny = height - 1;
 
-                        // 获取相邻像素值并累加
-                        sum += temp[(ny * width + nx) * channels + c];
-                        count++;
+                        // 获取相邻像素值并根据权重累加
+                        int kernel_idx = (ky + radius) * kernel_size + (kx + radius);
+                        sum += temp[(ny * width + nx) * channels + c] * kernel[kernel_idx];
                     }
                 }
 
-                // 计算平均值并设置到目标像素
-                data[(y * width + x) * channels + c] = (unsigned char)(sum / count);
+                // 设置到目标像素
+                data[(y * width + x) * channels + c] = (unsigned char)(sum + 0.5f); // 四舍五入
             }
         }
     }
 
-    // 释放临时内存
+    // 释放内存
+    free(kernel);
     free(temp);
 }

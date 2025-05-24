@@ -40,18 +40,23 @@ int main(int argc, char *argv[])
     printf("Loaded '%s': %dx%d, %d channels\n", argv[1], width, height, channels);
 
     // 调用 grayscale 函数进行灰度化处理
-    grayscale(data, width, height, channels);
-    printf("Image grayscaled.\n");
+    // grayscale(data, width, height, channels);
+    // printf("Image grayscaled.\n");
 
-    // 保存灰度图像
+    // 添加高斯模糊处理，使用半径为5的模糊效果
+    int blur_radius = 5;
+    blur(data, width, height, channels, blur_radius);
+    printf("Applied Gaussian blur with radius %d.\n", blur_radius);
+
+    // 保存处理后的图像
     // argv[2] 是输出图像的路径
-    // 90 是JPEG图像的质量参数 (1-100, 越高图像质量越好，文件越大)
+    // 100 是JPEG图像的质量参数 (1-100, 越高图像质量越好，文件越大)
     if (!stbi_write_jpg(argv[2], width, height, channels, data, 100)) {
         fprintf(stderr, "Error writing '%s'\n", argv[2]);
         stbi_image_free(data); // 释放之前加载的图像数据
         return 1;              // 保存失败，返回错误码1
     }
-    printf("Saved grayscale image to '%s'\n", argv[2]);
+    printf("Saved blurred image to '%s'\n", argv[2]);
 
     // 释放stb_image加载的图像数据，防止内存泄漏
     stbi_image_free(data);
