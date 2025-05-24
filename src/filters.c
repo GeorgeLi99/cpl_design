@@ -83,8 +83,8 @@ void blur(unsigned char *data, int width, int height, int channels, int radius)
     // 复制原始数据到临时缓冲区
     memcpy(temp, data, width * height * channels);
 
-    // 高斯模糊的核心大小 = 2 * radius + 1
-    int kernel_size = 2 * radius + 1;
+    // 注释掉未使用的变量
+    // int kernel_size = 2 * radius + 1;
 
     // 为了简化，使用均值模糊而不是真正的高斯模糊
     // 每个像素取周围区域的平均值

@@ -1,4 +1,6 @@
 #include "rotate.h"
+#include <stdlib.h> // 为 malloc 和 free 函数
+#include <string.h> // 为 memcpy 函数
 
 /**
  * @brief 旋转图像（实现180度翻转）
