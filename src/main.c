@@ -7,6 +7,7 @@
 
 #include <stdio.h>  // 用于标准输入输出，如 printf, fprintf
 #include <stdlib.h> // 用于标准库函数，如 exit
+#include <string.h> // 用于字符串处理函数
 #include "image.h"
 #include "filters.h"
 #include "ascii_art.h"
@@ -43,13 +44,12 @@ int main(int argc, char *argv[])
     sprintf(rotate_output, "%s/rotate_output.jpg", output_dir);
 
     int width, height, channels;
-    // 加载原始图像
-    unsigned char *original_data = stbi_load(argv[1], &width, &height, &channels, 0);
+    // 使用封装的 load_image 函数加载原始图像
+    unsigned char *original_data = load_image(argv[1], &width, &height, &channels);
     if (original_data == NULL) {
-        fprintf(stderr, "Error loading '%s': %s\n", argv[1], stbi_failure_reason());
+        // load_image 已经输出了错误信息，直接返回错误码
         return 1;
     }
-    printf("Loaded '%s': %dx%d, %d channels\n", argv[1], width, height, channels);
 
     // 1. 灰度处理
     unsigned char *grayscale_data = (unsigned char *)malloc(width * height * channels);
@@ -58,11 +58,9 @@ int main(int argc, char *argv[])
         grayscale(grayscale_data, width, height, channels);
         printf("Applied grayscale filter.\n");
 
-        if (stbi_write_jpg(grayscale_output, width, height, channels, grayscale_data, 100)) {
+        // 使用封装的 save_image 函数保存图像
+        if (save_image(grayscale_output, grayscale_data, width, height, channels, 100)) {
             printf("Saved grayscale image to '%s'\n", grayscale_output);
-        }
-        else {
-            fprintf(stderr, "Error writing '%s'\n", grayscale_output);
         }
         free(grayscale_data);
     }
@@ -75,11 +73,9 @@ int main(int argc, char *argv[])
         blur(blur_data, width, height, channels, blur_radius);
         printf("Applied Gaussian blur with radius %d.\n", blur_radius);
 
-        if (stbi_write_jpg(blur_output, width, height, channels, blur_data, 100)) {
+        // 使用封装的 save_image 函数保存图像
+        if (save_image(blur_output, blur_data, width, height, channels, 100)) {
             printf("Saved blurred image to '%s'\n", blur_output);
-        }
-        else {
-            fprintf(stderr, "Error writing '%s'\n", blur_output);
         }
         free(blur_data);
     }
@@ -91,11 +87,9 @@ int main(int argc, char *argv[])
         invert(invert_data, width, height, channels);
         printf("Applied invert filter.\n");
 
-        if (stbi_write_jpg(invert_output, width, height, channels, invert_data, 100)) {
+        // 使用封装的 save_image 函数保存图像
+        if (save_image(invert_output, invert_data, width, height, channels, 100)) {
             printf("Saved inverted image to '%s'\n", invert_output);
-        }
-        else {
-            fprintf(stderr, "Error writing '%s'\n", invert_output);
         }
         free(invert_data);
     }
@@ -107,11 +101,9 @@ int main(int argc, char *argv[])
         rotate_image(rotate_data, width, height, channels);
         printf("Applied rotation.\n");
 
-        if (stbi_write_jpg(rotate_output, width, height, channels, rotate_data, 100)) {
+        // 使用封装的 save_image 函数保存图像
+        if (save_image(rotate_output, rotate_data, width, height, channels, 100)) {
             printf("Saved rotated image to '%s'\n", rotate_output);
-        }
-        else {
-            fprintf(stderr, "Error writing '%s'\n", rotate_output);
         }
         free(rotate_data);
     }
