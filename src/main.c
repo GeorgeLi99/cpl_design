@@ -22,43 +22,102 @@
  */
 int main(int argc, char *argv[])
 {
-    // 检查命令行参数是否足够（程序名 + 输入文件 + 输出文件）
-    if (argc < 3) {
-        fprintf(stderr, "Usage: %s <input_image> <output_image>\n", argv[0]);
-        return 1; // 参数不足，返回错误码1
+    // 检查命令行参数
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_image> [output_dir]\n", argv[0]);
+        return 1;
     }
 
-    int width, height, channels; // 存储图像的宽度、高度和通道数
-    // 加载图像，argv[1] 是输入图像的路径
-    // 0 表示自动检测通道数，也可以强制指定通道数（如3为RGB，4为RGBA）
-    unsigned char *data = stbi_load(argv[1], &width, &height, &channels, 0);
-    // 检查图像是否加载成功
-    if (data == NULL) {
+    // 输出目录，默认为当前目录
+    const char *output_dir = (argc >= 3) ? argv[2] : "./";
+
+    // 创建输出文件名
+    char grayscale_output[256];
+    char blur_output[256];
+    char invert_output[256];
+    char rotate_output[256];
+
+    sprintf(grayscale_output, "%s/grayscale_output.jpg", output_dir);
+    sprintf(blur_output, "%s/blur_output.jpg", output_dir);
+    sprintf(invert_output, "%s/invert_output.jpg", output_dir);
+    sprintf(rotate_output, "%s/rotate_output.jpg", output_dir);
+
+    int width, height, channels;
+    // 加载原始图像
+    unsigned char *original_data = stbi_load(argv[1], &width, &height, &channels, 0);
+    if (original_data == NULL) {
         fprintf(stderr, "Error loading '%s': %s\n", argv[1], stbi_failure_reason());
-        exit(1); // 加载失败，打印错误信息并退出
+        return 1;
     }
     printf("Loaded '%s': %dx%d, %d channels\n", argv[1], width, height, channels);
 
-    // 调用 grayscale 函数进行灰度化处理
-    // grayscale(data, width, height, channels);
-    // printf("Image grayscaled.\n");
+    // 1. 灰度处理
+    unsigned char *grayscale_data = (unsigned char *)malloc(width * height * channels);
+    if (grayscale_data) {
+        memcpy(grayscale_data, original_data, width * height * channels);
+        grayscale(grayscale_data, width, height, channels);
+        printf("Applied grayscale filter.\n");
 
-    // 添加高斯模糊处理，使用半径为5的模糊效果
-    int blur_radius = 5;
-    blur(data, width, height, channels, blur_radius);
-    printf("Applied Gaussian blur with radius %d.\n", blur_radius);
-
-    // 保存处理后的图像
-    // argv[2] 是输出图像的路径
-    // 100 是JPEG图像的质量参数 (1-100, 越高图像质量越好，文件越大)
-    if (!stbi_write_jpg(argv[2], width, height, channels, data, 100)) {
-        fprintf(stderr, "Error writing '%s'\n", argv[2]);
-        stbi_image_free(data); // 释放之前加载的图像数据
-        return 1;              // 保存失败，返回错误码1
+        if (stbi_write_jpg(grayscale_output, width, height, channels, grayscale_data, 100)) {
+            printf("Saved grayscale image to '%s'\n", grayscale_output);
+        }
+        else {
+            fprintf(stderr, "Error writing '%s'\n", grayscale_output);
+        }
+        free(grayscale_data);
     }
-    printf("Saved blurred image to '%s'\n", argv[2]);
 
-    // 释放stb_image加载的图像数据，防止内存泄漏
-    stbi_image_free(data);
-    return 0; // 程序成功执行完毕
+    // 2. 高斯模糊处理
+    unsigned char *blur_data = (unsigned char *)malloc(width * height * channels);
+    if (blur_data) {
+        memcpy(blur_data, original_data, width * height * channels);
+        int blur_radius = 10; // 可以调整模糊半径
+        blur(blur_data, width, height, channels, blur_radius);
+        printf("Applied Gaussian blur with radius %d.\n", blur_radius);
+
+        if (stbi_write_jpg(blur_output, width, height, channels, blur_data, 100)) {
+            printf("Saved blurred image to '%s'\n", blur_output);
+        }
+        else {
+            fprintf(stderr, "Error writing '%s'\n", blur_output);
+        }
+        free(blur_data);
+    }
+
+    // 3. 反色处理
+    unsigned char *invert_data = (unsigned char *)malloc(width * height * channels);
+    if (invert_data) {
+        memcpy(invert_data, original_data, width * height * channels);
+        invert(invert_data, width, height, channels);
+        printf("Applied invert filter.\n");
+
+        if (stbi_write_jpg(invert_output, width, height, channels, invert_data, 100)) {
+            printf("Saved inverted image to '%s'\n", invert_output);
+        }
+        else {
+            fprintf(stderr, "Error writing '%s'\n", invert_output);
+        }
+        free(invert_data);
+    }
+
+    // 4. 旋转处理
+    unsigned char *rotate_data = (unsigned char *)malloc(width * height * channels);
+    if (rotate_data) {
+        memcpy(rotate_data, original_data, width * height * channels);
+        rotate_image(rotate_data, width, height, channels);
+        printf("Applied rotation.\n");
+
+        if (stbi_write_jpg(rotate_output, width, height, channels, rotate_data, 100)) {
+            printf("Saved rotated image to '%s'\n", rotate_output);
+        }
+        else {
+            fprintf(stderr, "Error writing '%s'\n", rotate_output);
+        }
+        free(rotate_data);
+    }
+
+    // 释放原始图像数据
+    stbi_image_free(original_data);
+    printf("All processing completed.\n");
+    return 0;
 }
