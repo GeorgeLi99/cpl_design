@@ -14,7 +14,10 @@ ImageProcessor 是一个基于 C 语言的图像处理工具，使用 stb_image 
 - 批量处理 (Batch Processing)
 
 ## 新增功能
-- **灰度化 (Grayscale)**: 通过命令行参数读取图像并生成灰度图像。
+- **灰度化 (Grayscale)**: 将彩色图像转换为灰度图像
+- **反色处理 (Invert)**: 将图像颜色反转
+- **高斯模糊 (Blur)**: 对图像应用高斯模糊效果
+- **图像旋转 (Rotate)**: 对图像进行旋转处理
 
 ## 依赖
 - C 编译器 (GCC/Clang/Visual Studio)
@@ -39,15 +42,15 @@ make
 ```
 .
 ├── src                     // 源代码目录
-│   ├── main.c              // 主程序入口
-│   ├── image.c             // 图像加载和保存
-│   ├── filters.c           // 滤镜效果实现
+│   ├── main.c              // 主程序入口，整合所有功能模块
+│   ├── image.c             // 图像加载和保存功能实现
+│   ├── filters.c           // 滤镜效果实现（灰度、反色、模糊）
 │   ├── ascii_art.c         // ASCII 字符画生成
 │   ├── edge.c              // 边缘检测实现
 │   ├── rotate.c            // 图像旋转功能
 │   └── batch.c             // 批量处理功能
 ├── include                 // 头文件目录
-│   ├── image.h             // 图像处理相关声明
+│   ├── image.h             // 图像处理相关声明（加载、保存函数）
 │   ├── filters.h           // 滤镜函数声明
 │   ├── ascii_art.h         // ASCII 艺术相关声明
 │   ├── edge.h              // 边缘检测相关声明
@@ -75,12 +78,24 @@ make
 
 ## 使用示例
 
-### 命令行运行方式（推荐）
+### 命令行运行方式
 ```bash
-# 在项目根目录下运行
-bin/ImageProcessor input.jpg output.jpg
+# 基本用法
+bin/ImageProcessor <input_image> [output_dir]
+
+# 示例1: 只指定输入图像，结果保存在当前目录
+bin/ImageProcessor test.jpg
+
+# 示例2: 指定输入图像和输出目录
+bin/ImageProcessor test.jpg output_folder
 ```
-其中 `input.jpg` 是输入图像文件，`output.jpg` 是生成的灰度图像文件。
+
+### 处理结果
+程序会自动对输入图像应用四种处理效果，并分别保存为以下文件：
+- `grayscale_output.jpg` - 灰度效果
+- `blur_output.jpg` - 模糊效果（高斯模糊）
+- `invert_output.jpg` - 反色效果
+- `rotate_output.jpg` - 旋转效果
 
 ### 运行问题及解决方法
 
@@ -95,29 +110,29 @@ bin/ImageProcessor input.jpg output.jpg
 1. **使用命令提示符/PowerShell运行程序**
    ```bash
    cd D:\path\to\project
-   bin\ImageProcessor.exe input.jpg output.jpg
+   bin\ImageProcessor.exe test.jpg
    ```
 
 2. **创建批处理文件 (run.bat)**
    ```bat
    @echo off
-   bin\ImageProcessor.exe input.jpg output.jpg
+   bin\ImageProcessor.exe test.jpg output
    pause
    ```
    双击 run.bat 执行，`pause` 命令会在程序结束后等待用户按键
 
 3. **检查处理结果**
-   - 查看是否生成了指定的输出文件
-   - 检查输出文件是否正确处理（如已转为灰度）
+   - 查看是否生成了输出文件（grayscale_output.jpg, blur_output.jpg 等）
+   - 检查输出文件是否正确处理
 
 ### 命令行参数说明
 
 ```
-ImageProcessor <input_image> <output_image>
+ImageProcessor <input_image> [output_dir]
 ```
 
 - `<input_image>`: 待处理的图像文件路径（支持 jpg, png, bmp 等格式）
-- `<output_image>`: 处理后输出的图像文件路径
+- `[output_dir]`: 可选参数，指定处理后图像的保存目录，默认为当前目录("./"）
 
 ## 许可证
 MIT License
