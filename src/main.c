@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     // 保存灰度图像
     // argv[2] 是输出图像的路径
     // 90 是JPEG图像的质量参数 (1-100, 越高图像质量越好，文件越大)
-    if (!stbi_write_jpg(argv[2], width, height, channels, data, 90)) {
+    if (!stbi_write_jpg(argv[2], width, height, channels, data, 100)) {
         fprintf(stderr, "Error writing '%s'\n", argv[2]);
         stbi_image_free(data); // 释放之前加载的图像数据
         return 1;              // 保存失败，返回错误码1

@@ -74,6 +74,50 @@ make
 ```
 
 ## 使用示例
-```sh
+
+### 命令行运行方式（推荐）
+```bash
+# 在项目根目录下运行
 bin/ImageProcessor input.jpg output.jpg
 ```
+其中 `input.jpg` 是输入图像文件，`output.jpg` 是生成的灰度图像文件。
+
+### 运行问题及解决方法
+
+**问题：** 程序窗口一闪而过，快速关闭
+
+**原因：** 
+- 没有提供命令行参数
+- 控制台应用程序执行完毕后自动关闭窗口
+
+**解决方法：**
+
+1. **使用命令提示符/PowerShell运行程序**
+   ```bash
+   cd D:\path\to\project
+   bin\ImageProcessor.exe input.jpg output.jpg
+   ```
+
+2. **创建批处理文件 (run.bat)**
+   ```bat
+   @echo off
+   bin\ImageProcessor.exe input.jpg output.jpg
+   pause
+   ```
+   双击 run.bat 执行，`pause` 命令会在程序结束后等待用户按键
+
+3. **检查处理结果**
+   - 查看是否生成了指定的输出文件
+   - 检查输出文件是否正确处理（如已转为灰度）
+
+### 命令行参数说明
+
+```
+ImageProcessor <input_image> <output_image>
+```
+
+- `<input_image>`: 待处理的图像文件路径（支持 jpg, png, bmp 等格式）
+- `<output_image>`: 处理后输出的图像文件路径
+
+## 许可证
+MIT License
