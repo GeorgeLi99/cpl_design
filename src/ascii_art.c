@@ -31,6 +31,10 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
     int h_scale = scale_factor;
     int v_scale = (int)(scale_factor * aspect_ratio);
 
+    // 计算输出的ASCII字符画的尺寸
+    int ascii_width = (width + h_scale - 1) / h_scale;   // 向上取整
+    int ascii_height = (height + v_scale - 1) / v_scale; // 向上取整
+
     // 打开输出文件
     FILE *fp = fopen(output_file, "w");
     if (!fp) {
@@ -39,10 +43,18 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
     }
 
     // 写入ASCII字符画信息头
-    fprintf(fp, "/* ASCII Art - Generated from image with %dx%d pixels */\n\n", width, height);
+    fprintf(fp,
+            "/* ASCII Art - Generated from image with %dx%d pixels (%dx%d characters) */\n\n",
+            width,
+            height,
+            ascii_width,
+            ascii_height);
 
     // 遍历图像，按缩放比例生成ASCII字符
     for (int y = 0; y < height; y += v_scale) {
+        // 为每行添加左边界标记
+        fprintf(fp, "| ");
+
         for (int x = 0; x < width; x += h_scale) {
             // 计算当前块的平均亮度
             float brightness = 0.0f;
@@ -84,8 +96,9 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
             // 写入对应的ASCII字符
             fprintf(fp, "%c", ascii_chars[char_idx]);
         }
-        // 每行结束后换行
-        fprintf(fp, "\n");
+
+        // 为每行添加右边界标记，帮助对齐
+        fprintf(fp, " |\n");
     }
 
     // 关闭文件
