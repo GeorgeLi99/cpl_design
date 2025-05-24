@@ -25,9 +25,11 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
     const char *ascii_chars = " .:-=+*#%@";
     int ascii_chars_len = strlen(ascii_chars);
 
-    // 计算缩放后的尺寸
-    int scaled_width = width / scale_factor;
-    int scaled_height = height / scale_factor;
+    // 水平方向的缩放补偿因子（因为ASCII字符通常高度大于宽度）
+    // 一般来说，终端字符的高宽比约为2:1，所以我们应用一个水平缩放补偿
+    float aspect_ratio = 2.0f; // 字符高宽比（高/宽）
+    int h_scale = scale_factor;
+    int v_scale = (int)(scale_factor * aspect_ratio);
 
     // 打开输出文件
     FILE *fp = fopen(output_file, "w");
@@ -40,15 +42,15 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
     fprintf(fp, "/* ASCII Art - Generated from image with %dx%d pixels */\n\n", width, height);
 
     // 遍历图像，按缩放比例生成ASCII字符
-    for (int y = 0; y < height; y += scale_factor) {
-        for (int x = 0; x < width; x += scale_factor) {
+    for (int y = 0; y < height; y += v_scale) {
+        for (int x = 0; x < width; x += h_scale) {
             // 计算当前块的平均亮度
             float brightness = 0.0f;
             int count = 0;
 
             // 计算当前块的像素平均值
-            for (int by = 0; by < scale_factor && (y + by) < height; by++) {
-                for (int bx = 0; bx < scale_factor && (x + bx) < width; bx++) {
+            for (int by = 0; by < v_scale && (y + by) < height; by++) {
+                for (int bx = 0; bx < h_scale && (x + bx) < width; bx++) {
                     int idx = ((y + by) * width + (x + bx)) * channels;
                     // 计算灰度值 - 使用加权RGB
                     float gray = 0;
