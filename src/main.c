@@ -108,8 +108,13 @@ int main(int argc, char *argv[])
         free(rotate_data);
     }
 
-    // 释放原始图像数据
-    stbi_image_free(original_data);
+    // 5. 生成ASCII字符画
+    if (original_data) {
+        image_to_ascii(original_data, width, height, channels, "output.txt", 5);
+        // 释放图像数据
+        stbi_image_free(original_data);
+    }
+
     printf("All processing completed.\n");
     return 0;
 }
