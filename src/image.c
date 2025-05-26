@@ -1,9 +1,12 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 #include "image.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stb_image.h"
-#include "stb_image_write.h"
 
 /**
  * @brief 从指定路径加载图像。
@@ -27,7 +30,7 @@ unsigned char *load_image(const char *path, int *width, int *height, int *channe
         return NULL;
     }
 
-    printf("Successfully loaded image '%s': %dx%d, %d channels\n", path, *width, *height, *channels);
+    printf("Successfully loaded image '%s' (%dx%d, %d channels)\n", path, *width, *height, *channels);
     return data;
 }
 
@@ -48,25 +51,32 @@ int save_image(const char *path, unsigned char *data, int width, int height, int
         return 0;
     }
 
-    int result = 0;
+    // 根据文件扩展名确定保存格式
     const char *ext = strrchr(path, '.');
     if (!ext) {
-        fprintf(stderr, "Error: File extension not found in '%s'\n", path);
+        fprintf(stderr, "No file extension found in path '%s'\n", path);
         return 0;
     }
 
-    // 根据文件扩展名选择保存格式
+    int result = 0;
     if (strcmp(ext, ".jpg") == 0 || strcmp(ext, ".jpeg") == 0) {
+        // 保存为JPEG格式
         result = stbi_write_jpg(path, width, height, channels, data, quality);
     }
     else if (strcmp(ext, ".png") == 0) {
+        // 保存为PNG格式
         result = stbi_write_png(path, width, height, channels, data, width * channels);
     }
     else if (strcmp(ext, ".bmp") == 0) {
+        // 保存为BMP格式
         result = stbi_write_bmp(path, width, height, channels, data);
     }
+    else if (strcmp(ext, ".tga") == 0) {
+        // 保存为TGA格式
+        result = stbi_write_tga(path, width, height, channels, data);
+    }
     else {
-        fprintf(stderr, "Unsupported image format: %s\n", ext);
+        fprintf(stderr, "Unsupported file format: %s\n", ext);
         return 0;
     }
 
