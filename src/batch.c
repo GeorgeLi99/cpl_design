@@ -235,11 +235,17 @@ void batch_process()
             free(rotate_data);
         }
 
-        // 5. ASCII字符画（使用块状ASCII兼容字符集）
-        image_to_ascii_styled(image_data, width, height, channels, ascii_output, 5, ASCII_STYLE_BLOCKS, 0.8f);
+        // 5. 边缘检测
+        int edge_threshold = 50; // 稍微降低阈值，检测更多边缘
+        unsigned char *edge_data = sobel_edge_detect(image_data, width, height, channels, edge_threshold);
+        if (edge_data) {
+            save_image(edge_output, edge_data, width, height, channels, 100);
+            free(edge_data);
+            printf("Applied edge detection (threshold: %d) to %s\n", edge_threshold, entry->d_name);
+        }
 
-        // 6. 边缘检测（如果实现了）
-        // TODO: 实现边缘检测函数
+        // 6. ASCII字符画（使用块状ASCII兼容字符集）
+        image_to_ascii_styled(image_data, width, height, channels, ascii_output, 5, ASCII_STYLE_BLOCKS, 0.8f);
 
         // 释放图像数据
         stbi_image_free(image_data);

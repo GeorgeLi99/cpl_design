@@ -125,7 +125,25 @@ int main(int argc, char *argv[])
         free(rotate_data);
     }
 
-    // 5. 生成ASCII字符画 - 多种风格
+    // 5. 边缘检测处理
+    char edge_output[256];
+    sprintf(edge_output, "%s/edge_output.jpg", output_dir);
+
+    // 应用增强版Sobel边缘检测，使用双阈值滞后处理
+    int edge_threshold = 50; // 降低阈值，可以检测更多边缘
+    unsigned char *edge_data = sobel_edge_detect(original_data, width, height, channels, edge_threshold);
+    if (edge_data) {
+        printf("Applied enhanced Sobel edge detection with threshold %d.\n", edge_threshold);
+        printf("(Uses hysteresis thresholding for better edge connectivity)\n");
+
+        // 保存边缘检测结果
+        if (save_image(edge_output, edge_data, width, height, channels, 100)) {
+            printf("Saved edge detection result to '%s'\n", edge_output);
+        }
+        free(edge_data);
+    }
+
+    // 6. 生成ASCII字符画 - 多种风格
     if (original_data) {
         // 生成简单风格的ASCII字符画
         image_to_ascii(original_data, width, height, channels, ascii_output_simple, 5);

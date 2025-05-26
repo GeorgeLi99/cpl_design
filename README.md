@@ -94,11 +94,12 @@ bin/ImageProcessor --batch
 ```
 
 ### 处理结果
-程序会自动对输入图像应用四种处理效果，并分别保存为以下文件：
+程序会自动对输入图像应用五种处理效果，并分别保存为以下文件：
 - `grayscale_output.jpg` - 灰度效果
 - `blur_output.jpg` - 模糊效果（高斯模糊）
 - `invert_output.jpg` - 反色效果
 - `rotate_output.jpg` - 旋转效果
+- `edge_output.jpg` - 边缘检测效果（Sobel算子）
 
 ### 运行问题及解决方法
 
@@ -147,6 +148,7 @@ ImageProcessor --batch
 - `batch_output/blur/` - 模糊处理后的图像
 - `batch_output/invert/` - 反色处理后的图像
 - `batch_output/rotate/` - 旋转处理后的图像
+- `batch_output/edge/` - 边缘检测结果
 - `batch_output/ascii/` - ASCII字符画文件
 
 每个图像会被处理并保存为对应的输出文件，文件名格式为 `原文件名_处理类型.扩展名`。
