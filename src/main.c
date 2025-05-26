@@ -21,7 +21,15 @@ int main(int argc, char *argv[])
     // 检查命令行参数
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <input_image> [output_dir]\n", argv[0]);
+        fprintf(stderr, "       %s --batch    (批量处理batch_input目录中的所有图像)\n", argv[0]);
         return 1;
+    }
+
+    // 检查是否是批处理模式
+    if (strcmp(argv[1], "--batch") == 0) {
+        printf("Starting batch processing mode...\n");
+        batch_process();
+        return 0;
     }
 
     // 输出目录，默认为当前目录

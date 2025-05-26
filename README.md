@@ -88,6 +88,9 @@ bin/ImageProcessor test.jpg
 
 # 示例2: 指定输入图像和输出目录
 bin/ImageProcessor test.jpg output_folder
+
+# 示例3: 批量处理模式，处理batch_input目录中的所有图像
+bin/ImageProcessor --batch
 ```
 
 ### 处理结果
@@ -129,10 +132,30 @@ bin/ImageProcessor test.jpg output_folder
 
 ```
 ImageProcessor <input_image> [output_dir]
+ImageProcessor --batch
 ```
 
 - `<input_image>`: 待处理的图像文件路径（支持 jpg, png, bmp 等格式）
 - `[output_dir]`: 可选参数，指定处理后图像的保存目录，默认为当前目录("./"）
+- `--batch`: 批量处理模式，处理 `batch_input` 目录中的所有图像，并将结果保存在 `batch_output` 目录下
+
+### 批量处理模式
+
+批量处理模式会处理 `batch_input` 目录中的所有图片文件，并将处理后的结果保存在 `batch_output` 目录的不同子文件夹中：
+
+- `batch_output/grayscale/` - 灰度处理后的图像
+- `batch_output/blur/` - 模糊处理后的图像
+- `batch_output/invert/` - 反色处理后的图像
+- `batch_output/rotate/` - 旋转处理后的图像
+- `batch_output/ascii/` - ASCII字符画文件
+
+每个图像会被处理并保存为对应的输出文件，文件名格式为 `原文件名_处理类型.扩展名`。
+
+**使用步骤：**
+1. 创建 `batch_input` 目录（如果不存在）
+2. 将要处理的图像文件放入 `batch_input` 目录
+3. 执行命令 `bin/ImageProcessor --batch`
+4. 查看 `batch_output` 目录中的处理结果
 
 ## 许可证
 MIT License
