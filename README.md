@@ -156,6 +156,62 @@ const char *ascii_chars = " .:=#"; // 块状ASCII兼容字符集
 int char_index = (int)(brightness_value * (ascii_chars_len - 1));
 ```
 
+### 文件说明
+
+#### main.c
+主程序入口，处理命令行参数，协调各功能模块的调用，支持单文件处理和批量处理模式。
+
+#### image.c/h
+封装图像加载和保存功能：
+- `load_image`: 使用stb_image加载图像文件
+- `save_image`: 使用stb_image_write保存处理后的图像
+
+#### filters.c/h
+实现基础图像处理滤镜：
+- `apply_grayscale`: 将彩色图像转换为灰度图
+- `apply_invert`: 反转图像颜色
+- `apply_blur`: 应用高斯模糊效果
+
+#### edge.c/h
+实现边缘检测算法：
+- `apply_edge_detection`: 使用Sobel算子进行边缘检测
+- `compute_gradient`: 计算像素梯度
+- `non_max_suppression`: 非极大值抑制处理
+
+#### ascii_art.c/h
+ASCII字符画生成：
+- `image_to_ascii`: 将图像转换为ASCII字符画
+- `image_to_ascii_styled`: 支持多种风格的ASCII转换
+
+#### rotate.c/h
+图像旋转功能：
+- `rotate_image`: 使用矩阵变换旋转图像
+
+#### batch.c/h
+批量处理功能：
+- `batch_process`: 处理指定目录中的所有图像
+- `create_output_dirs`: 创建批处理输出目录结构
+
+### 开发环境配置
+
+#### Windows (MinGW)
+1. 安装MinGW并添加到PATH环境变量
+2. 确保安装了gcc、make和相关工具链
+3. 所需依赖:
+   - gcc (建议7.0+)
+   - make
+   - Windows SDK (如果使用MSVC)
+
+#### Linux
+1. 安装基础开发工具:
+   ```bash
+   sudo apt-get install build-essential
+   ```
+2. 安装开发依赖:
+   ```bash
+   sudo apt-get install libpng-dev libjpeg-dev
+   ```
+
 ## 使用示例
 
 ### 命令行运行方式
