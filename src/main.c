@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
             original_data, width, height, channels, ascii_output_classic, 6, ASCII_STYLE_CLASSIC, 0.7f);
 
         printf("Generated ASCII art in multiple high-contrast styles:\n");
-        printf("  - ascii_output_simple.txt (6-character high-contrast set)\n");
+        printf("  - ascii_output_simple.txt (块状ASCII兼容字符集)\n");
         printf("  - ascii_output_extended.txt (13-character extended set, gamma=0.6)\n");
         printf("  - ascii_output_blocks.txt (ASCII block characters, gamma=0.8, no Unicode)\n");
         printf("  - ascii_output_dense.txt (15-character dense set, gamma=0.5)\n");

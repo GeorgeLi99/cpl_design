@@ -21,8 +21,8 @@ int image_to_ascii(unsigned char *data, int width, int height, int channels, con
         return 0;
     }
 
-    // 高对比度ASCII字符集，从暗到亮，确保明显的视觉差异
-    const char *ascii_chars = " .-+*#@";
+    // 块状字符集：使用ASCII兼容字符避免乱码问题
+    const char *ascii_chars = " .:=#";
     int ascii_chars_len = strlen(ascii_chars);
 
     // 字符高宽比补偿，通常字符高度约是宽度的两倍
@@ -168,7 +168,7 @@ static const char *get_ascii_charset(ascii_style_t style)
         return " .-:=+*%#@";
 
     default:
-        return " .-+*#@";
+        return " .:=#";
     }
 }
 

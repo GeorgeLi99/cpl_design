@@ -235,8 +235,8 @@ void batch_process()
             free(rotate_data);
         }
 
-        // 5. ASCII字符画
-        image_to_ascii_styled(image_data, width, height, channels, ascii_output, 5, ASCII_STYLE_EXTENDED, 0.6f);
+        // 5. ASCII字符画（使用块状ASCII兼容字符集）
+        image_to_ascii_styled(image_data, width, height, channels, ascii_output, 5, ASCII_STYLE_BLOCKS, 0.8f);
 
         // 6. 边缘检测（如果实现了）
         // TODO: 实现边缘检测函数
