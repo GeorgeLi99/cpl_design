@@ -13,11 +13,23 @@ ImageProcessor 是一个基于 C 语言的图像处理工具，使用 stb_image 
 - 图像旋转 (矩阵变换)
 - 批量处理 (Batch Processing)
 
-## 新增功能
-- **灰度化 (Grayscale)**: 将彩色图像转换为灰度图像
-- **反色处理 (Invert)**: 将图像颜色反转
-- **高斯模糊 (Blur)**: 对图像应用高斯模糊效果
-- **图像旋转 (Rotate)**: 对图像进行旋转处理
+## 功能详情
+
+### 基本图像处理
+- **灰度化 (Grayscale)**: 将彩色图像转换为灰度图像，使用RGB加权平均法（R:0.299, G:0.587, B:0.114）
+- **反色处理 (Invert)**: 将图像颜色反转，实现负片效果
+- **高斯模糊 (Blur)**: 对图像应用高斯模糊效果，可调整模糊半径
+- **图像旋转 (Rotate)**: 对图像进行旋转处理，使用矩阵变换
+
+### 高级功能
+- **边缘检测 (Edge Detection)**: 使用Sobel算子进行边缘检测，结合双阈值滞后处理提高边缘连续性
+- **ASCII字符画 (ASCII Art)**: 将图像转换为ASCII字符画，支持多种风格和分辨率
+  - 简单风格: 使用6种ASCII字符表示不同亮度
+  - 扩展风格: 使用13种字符提供更细腻的灰度层次
+  - 块状风格: 使用ASCII兼容字符构建清晰的边界
+  - 经典风格: 使用传统字符集，保证全平台兼容性
+  
+- **批量处理 (Batch Processing)**: 批量处理目录中的所有图像文件，自动应用所有效果
 
 ## 依赖
 - C 编译器 (GCC/Clang/Visual Studio)
@@ -99,7 +111,7 @@ bin/ImageProcessor --batch
 - `blur_output.jpg` - 模糊效果（高斯模糊）
 - `invert_output.jpg` - 反色效果
 - `rotate_output.jpg` - 旋转效果
-- `edge_output.jpg` - 边缘检测效果（Sobel算子）
+- `edge_output.jpg` - 边缘检测效果（增强型Sobel算子，边缘为白色，背景为黑色）
 
 ### 运行问题及解决方法
 
@@ -158,6 +170,63 @@ ImageProcessor --batch
 2. 将要处理的图像文件放入 `batch_input` 目录
 3. 执行命令 `bin/ImageProcessor --batch`
 4. 查看 `batch_output` 目录中的处理结果
+
+## 高级参数调整
+
+### 边缘检测调整
+边缘检测功能采用了增强型Sobel算子算法，包含以下特性：
+- **双阈值滞后处理**：使用高低两个阈值，确保边缘连续性
+- **非极大值抑制**：减少边缘宽度，提高精确度
+- **梯度幅值计算**：结合水平和垂直梯度
+
+如需调整边缘检测效果，可修改源代码中的阈值参数：
+- 在 `src/main.c` 和 `src/batch.c` 中查找 `edge_threshold` 变量
+- 降低阈值（如 30-40）会检测到更多边缘，但可能包含噪声
+- 提高阈值（如 60-70）会只保留明显的边缘，减少细节
+
+### ASCII字符画调整
+ASCII字符画生成功能提供多种风格和参数：
+- **比例因子**：控制输出字符画的大小，数值越大输出越小
+- **伽马校正**：调整对比度，值小于1增强暗部细节，大于1增强亮部细节
+- **字符集选择**：从简单到复杂的多种字符集
+
+可在 `src/main.c` 中调整以下参数：
+```c
+// 修改scale_factor(第5个参数)可调整输出大小
+// 修改gamma值(最后一个参数)可调整对比度
+image_to_ascii_styled(data, width, height, channels, output_file, 5, ASCII_STYLE_BLOCKS, 0.8f);
+```
+
+## 安装与配置
+
+### Windows
+1. 安装MinGW或MSYS2，确保将编译器路径添加到环境变量中
+2. 克隆项目代码：`git clone <项目URL>`
+3. 进入项目目录：`cd ImageProcessor`
+4. 编译项目：`mingw32-make`
+5. 运行程序：`bin\ImageProcessor.exe <input_image>`
+
+### Linux/macOS
+1. 确保已安装GCC和Make
+2. 克隆项目代码：`git clone <项目URL>`
+3. 进入项目目录：`cd ImageProcessor`
+4. 编译项目：`make`
+5. 运行程序：`./bin/ImageProcessor <input_image>`
+
+## 贡献
+欢迎通过以下方式贡献本项目：
+1. Fork本仓库
+2. 创建功能分支：`git checkout -b feature/amazing-feature`
+3. 提交更改：`git commit -m 'Add some amazing feature'`
+4. 推送到分支：`git push origin feature/amazing-feature`
+5. 提交Pull Request
+
+### 可贡献的方向
+- 添加更多图像滤镜和特效
+- 改进边缘检测算法
+- 优化ASCII字符画生成
+- 添加图形用户界面
+- 优化性能和内存使用
 
 ## 许可证
 MIT License
