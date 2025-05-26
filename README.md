@@ -51,28 +51,33 @@ make
 1. 可执行文件将在 `bin/` 目录下生成。
 
 ## 项目结构
+
+### 目录布局
 ```
 .
-├── src                     // 源代码目录
+├── src/                    // 源代码目录
 │   ├── main.c              // 主程序入口，整合所有功能模块
 │   ├── image.c             // 图像加载和保存功能实现
 │   ├── filters.c           // 滤镜效果实现（灰度、反色、模糊）
 │   ├── ascii_art.c         // ASCII 字符画生成
-│   ├── edge.c              // 边缘检测实现
+│   ├── edge.c              // 边缘检测实现（Sobel算子）
 │   ├── rotate.c            // 图像旋转功能
 │   └── batch.c             // 批量处理功能
-├── include                 // 头文件目录
+│
+├── include/                // 头文件目录
 │   ├── image.h             // 图像处理相关声明（加载、保存函数）
 │   ├── filters.h           // 滤镜函数声明
 │   ├── ascii_art.h         // ASCII 艺术相关声明
 │   ├── edge.h              // 边缘检测相关声明
 │   ├── rotate.h            // 旋转功能相关声明
 │   └── batch.h             // 批处理相关声明
-├── third_party             // 第三方库
-│   └── stb                 // stb 单头文件库
+│
+├── third_party/            // 第三方库
+│   └── stb/                // stb 单头文件库
 │       ├── stb_image.h     // 图像加载库
 │       └── stb_image_write.h // 图像保存库
-├── obj                     // 编译生成的对象文件
+│
+├── obj/                    // 编译生成的对象文件
 │   ├── main.o
 │   ├── image.o
 │   ├── filters.o
@@ -80,12 +85,75 @@ make
 │   ├── edge.o
 │   ├── rotate.o
 │   └── batch.o
-├── bin                     // 可执行文件输出
+│
+├── bin/                    // 可执行文件输出
 │   └── ImageProcessor.exe  // 程序可执行文件
+│
+├── batch_input/            // 批处理输入目录（存放待处理图像）
+│
+├── batch_output/           // 批处理输出目录
+│   ├── grayscale/          // 灰度处理结果
+│   ├── blur/               // 模糊处理结果
+│   ├── invert/             // 反色处理结果
+│   ├── rotate/             // 旋转处理结果
+│   ├── edge/               // 边缘检测结果
+│   └── ascii/              // ASCII字符画
+│
 ├── image.jpg               // 测试图像
-├── .clang-format           // 格式化工具配置文件
+├── lenna.png               // 经典测试图像
+├── .clang-format           // 代码格式化配置文件
 ├── Makefile                // 项目构建配置
-└── README.md               // 项目说明
+└── README.md               // 项目说明文档
+```
+
+### 模块说明
+
+#### 核心模块
+- **image**: 图像的加载和保存，封装了stb_image库的功能
+- **filters**: 基础图像滤镜功能，包括灰度化、反色和高斯模糊
+- **edge**: 边缘检测功能，使用增强型Sobel算子实现
+- **rotate**: 图像旋转功能，使用矩阵变换实现
+- **ascii_art**: ASCII字符画生成，支持多种字符集和风格
+- **batch**: 批量处理功能，可处理目录中的所有图像
+
+#### 编译与构建
+- **Makefile**: 定义编译规则和目标
+- **obj/**: 存放编译过程中生成的目标文件
+- **bin/**: 存放最终生成的可执行程序
+
+#### 输入输出
+- **batch_input/**: 批处理模式的输入目录，存放待处理的图像
+- **batch_output/**: 批处理模式的输出目录，按不同处理类型分类存储结果
+
+### 核心算法示例
+
+#### 灰度转换
+```c
+// 使用加权平均法进行灰度转换
+float gray_value = 0.299f * r + 0.587f * g + 0.114f * b;
+```
+
+#### Sobel边缘检测
+```c
+// 水平梯度算子 Gx
+// [-1 0 1]
+// [-2 0 2]
+// [-1 0 1]
+
+// 垂直梯度算子 Gy
+// [-1 -2 -1]
+// [ 0  0  0]
+// [ 1  2  1]
+
+// 计算梯度幅值
+int magnitude = (int)sqrt(gx * gx + gy * gy);
+```
+
+#### ASCII字符画映射
+```c
+// 将像素亮度映射到ASCII字符
+const char *ascii_chars = " .:=#"; // 块状ASCII兼容字符集
+int char_index = (int)(brightness_value * (ascii_chars_len - 1));
 ```
 
 ## 使用示例
